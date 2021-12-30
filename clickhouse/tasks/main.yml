@@ -1,0 +1,76 @@
+---
+- name: Requirements check | Checking sse4_2 support
+  command: grep -q sse4_2 /proc/cpuinfo
+  changed_when: False
+
+- name: Install clickhouse repo
+  yum_repository:
+    name: clickhouse
+    description: "Clickhouse repo"
+    baseurl: "https://repo.clickhouse.com/rpm/stable/x86_64"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "https://repo.clickhouse.com/CLICKHOUSE-KEY.GPG"
+
+- name: Install packages
+  yum:
+    name: clickhouse-server,clickhouse-client
+    state: present
+
+- name: Enable and start clickhouse
+  systemd:
+    name: clickhouse-server
+    state: started
+    enabled: yes
+
+- name: Clean config xml format
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/clickhouse-server/"
+    owner: clickhouse
+    group: clickhouse
+    mode: 0600
+  loop:
+    - config.xml
+    - users.xml
+
+- name: Create custom config dirs
+  file:
+    path: "/etc/clickhouse-server/{{ item }}"
+    state: directory
+    owner: clickhouse
+    group: clickhouse
+    mode: 0700
+  loop:
+    - conf.d
+    - users.d
+    - config.d
+
+- name: Default config
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/clickhouse-server/{{ item }}"
+    owner: clickhouse
+    group: clickhouse
+    mode: 0600
+  loop:
+    - conf.d/config.yaml
+    - users.yaml
+
+- name: Generate system config
+  template:
+    src: config.j2
+    dest: /etc/clickhouse-server/config.d/config.yaml
+    owner: clickhouse
+    group: clickhouse
+    mode: 0600
+  notify: restart clickhouse
+
+- name: Generate users config
+  template:
+    src: users.j2
+    dest: /etc/clickhouse-server/users.d/users.yaml      
+    owner: clickhouse
+    group: clickhouse
+    mode: 0600
+...
