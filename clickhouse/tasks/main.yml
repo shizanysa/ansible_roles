@@ -44,7 +44,6 @@
   loop:
     - conf.d
     - users.d
-    - config.d
 
 - name: Default config
   copy:
@@ -54,13 +53,13 @@
     group: clickhouse
     mode: 0600
   loop:
-    - conf.d/config.yaml
+    - conf.d/00.config.yaml
     - users.yaml
 
 - name: Generate system config
   template:
     src: config.j2
-    dest: /etc/clickhouse-server/config.d/config.yaml
+    dest: /etc/clickhouse-server/conf.d/01.config.yaml
     owner: clickhouse
     group: clickhouse
     mode: 0600
@@ -73,4 +72,27 @@
     owner: clickhouse
     group: clickhouse
     mode: 0600
+
+
+- name: Check list of existing databases
+  command:
+          clickhouse-client --port "{{ clickhouse_conf.tcp_port }}" -q "show databases"
+  changed_when: False
+  register: existing_databases
+
+- name: Create database
+  command: |
+          clickhouse-client --port "{{ clickhouse_conf.tcp_port }}" -q "CREATE DATABASE IF NOT EXISTS `{{ item.name }}`"
+  loop: "{{ clickhouse_databases }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: (item.state is undefined or item.state == "present") and item.name not in existing_databases.stdout_lines 
+
+- name: Delete database
+  command: |
+          clickhouse-client -q "DROP DATABASE IF EXISTS `{{ item.name }}`"
+  loop: "{{ clickhouse_databases }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: (item.state is defined and item.state == "absent") and item.name in existing_databases.stdout_lines
 ...

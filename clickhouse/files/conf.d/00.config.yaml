@@ -1,3 +1,5 @@
+# THIS FILE IS MANAGED BY ANSIBLE, ALL CHANGES WILL BE LOS
+
 logger:
     level: trace
     log: /var/log/clickhouse-server/clickhouse-server.log
