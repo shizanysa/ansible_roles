@@ -3,7 +3,7 @@
 
 Example
 
----
+```
 clickhouse_conf:
   default_profile: "default"
   default_database: "default"
@@ -27,5 +27,4 @@ clickhouse_databases:
     state: present
   - name: web
     state: absent
-
----
+```
