@@ -1,9 +1,9 @@
 # Role for clickhouse install and configs
 
 
-Example
+Example inventory vars:
 
-```
+```yaml
 clickhouse_conf:
   default_profile: "default"
   default_database: "default"
