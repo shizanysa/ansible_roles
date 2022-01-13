@@ -8,7 +8,7 @@ None
 ### Features
 
 - Support yaml only configs
-- All variables use from clickhouse [docs](https://clickhouse.com/docs/)
+- All variables use from [ClickHouse docs](https://clickhouse.com/docs/)
 
 Example inventory vars
 ---
