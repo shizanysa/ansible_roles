@@ -5,6 +5,11 @@ Requirements
 
 None
 
+### Features
+
+- Support yaml only configs
+- All variables use from clickhouse (https://clickhouse.com/docs/ "docs")
+
 Example inventory vars
 ---
 
@@ -34,3 +39,9 @@ clickhouse_databases:
   - name: web
     state: absent
 ```
+
+TODO
+---
+
+1. Backup
+2. Monitoring
