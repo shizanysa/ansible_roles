@@ -1,7 +1,12 @@
-# Role for clickhouse install and configs
+# clickhouse
 
+Requirements
+------------
 
-Example inventory vars:
+None
+
+Example inventory vars
+---
 
 ```yaml
 clickhouse_conf:
@@ -13,6 +18,7 @@ clickhouse_conf:
     size: "1000M"
   http_port: "8123"
   tcp_port: "9000"
+
 clickhouse_users:
   users:
     test_user:
